@@ -3,6 +3,13 @@ const express=require("express")
 const app=express();
 const cors=require("cors");
 
+
+const stripe = require('stripe')('sk_test_51M7EzMEdI8RYA41Vd5z0CmiAioMViHTKBrU726MuVR01cT971ftnmnUekqI5CoRboMc3VyjKNzXYjYbEDcNAk7eL00COyK83lr');
+
+
+
+
+
 var jwt = require('jsonwebtoken');
 
 
@@ -156,12 +163,26 @@ async function run() {
             res.send(productData);
           });
   
-      //all product gate 
-      app.get("/products", async (req, res) => {
-        const productData = productManagementCollection.find();
+      //all product gate email
+      app.get("/products/getemail/:email", async (req, res) => {
+
+        const userEmail=req.params.email;
+
+        const productData = productManagementCollection.find({userEmail});
         const result = await productData.toArray();
         res.send(result);
       });
+
+
+        //all product gate 
+        app.get("/products", async (req, res) => {
+            const productData = productManagementCollection.find();
+            const result = await productData.toArray();
+            res.send(result);
+          });
+
+
+
 
 
        // product routes patch update data
@@ -188,6 +209,77 @@ async function run() {
       });
 
       /////////////
+
+
+
+    //   app.post("/payment",async(req,res)=>{
+    //     const {products}=req.body;
+
+    //     // const lineItems=products.map((product)=>({
+    //     //     price_data:{
+    //     //         currency:"usd",
+    //     //         product_data:{
+    //     //             name:product.productName,
+    //     //             images:[product.image]
+    //     //         },
+    //     //         unit_amount:Math.round(product.price*100),
+    //     //     },
+
+
+    //     // }));
+
+    //     const paymentIntent=await stripe.paymentIntent.create({
+    //         unit_amount:Math.round(products.price*100),
+    //         currency:"usd",
+    //         product_data:{
+    //                         name:products.productName,
+    //                         images:[products.image],
+    //                         price:products.price
+    //                     },
+
+    //     })
+    //     const session=await stripe.checkout.session.create({
+    //         payment_method_types:["card"],
+    //         line_items:paymentIntent,
+    //         mode:"payment",
+    //         success_url:"http://localhost:5000/success",
+    //         cancel_url:"http://localhost:5000/cancel"
+    //     })
+    //     res.json({id:session.id})
+
+    //   })
+
+
+    app.post("/checkout",async (req,res)=>{
+        try{
+            const session=await stripe.checkout.session.create({
+                payment_method_types:["card"],
+                mode:"payment",
+                line_items:req.body.products.map(product=>{
+                    return{
+                        price_data:{
+                                   currency:"usd",
+                                   product_data:{
+                                        name:product.name,
+                                        // images:[product.image]
+                                    },
+                                    //  unit_amount:Math.round(product.price*100),
+                                    unit_amount:(product.price)*100,
+                              },
+                              quantity:product.quantity
+                    }
+                }),
+                success_url:"http://localhost:5000/success",
+                cancel_url:"http://localhost:5000/cancel"
+
+
+            })
+            res.json({url:session.url})
+        }catch(error){
+            res.status(500).json({error:error.message})
+
+        }
+    })
 
 
 
