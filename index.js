@@ -1,5 +1,5 @@
 
-const express=require("express")
+const express=require("express");
 const app=express();
 const cors=require("cors");
 
@@ -250,36 +250,7 @@ async function run() {
     //   })
 
 
-    app.post("/checkout",async (req,res)=>{
-        try{
-            const session=await stripe.checkout.session.create({
-                payment_method_types:["card"],
-                mode:"payment",
-                line_items:req.body.products.map(product=>{
-                    return{
-                        price_data:{
-                                   currency:"usd",
-                                   product_data:{
-                                        name:product.name,
-                                        // images:[product.image]
-                                    },
-                                    //  unit_amount:Math.round(product.price*100),
-                                    unit_amount:(product.price)*100,
-                              },
-                              quantity:product.quantity
-                    }
-                }),
-                success_url:"http://localhost:5000/success",
-                cancel_url:"http://localhost:5000/cancel"
-
-
-            })
-            res.json({url:session.url})
-        }catch(error){
-            res.status(500).json({error:error.message})
-
-        }
-    })
+  
 
 
 
@@ -297,6 +268,44 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+
+
+app.post("/checkout",async (req,res)=>{
+  try{
+      const session=await stripe.checkout.session.create({
+          payment_method_types:["card"],
+          mode:"payment",
+          line_items:req.body.products.map(product=>{
+              return{
+                  price_data:{
+                             currency:"usd",
+                             product_data:{
+                                  name:product.name,
+                                  // images:[product.image]
+                              },
+                              //  unit_amount:Math.round(product.price*100),
+                              unit_amount:(product.price)*100,
+                        },
+                        quantity:product.quantity
+              }
+          }),
+          success_url:"http://localhost:5000/success",
+          cancel_url:"http://localhost:5000/cancel"
+
+
+      })
+      res.json({url:session.url})
+  }catch(error){
+      res.status(500).json({error:error.message})
+
+  }
+})
+
+
+
+
+
 
 
 
