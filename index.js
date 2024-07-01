@@ -271,36 +271,92 @@ run().catch(console.dir);
 
 
 
-app.post("/checkout",async (req,res)=>{
-  try{
-      const session=await stripe.checkout.session.create({
-          payment_method_types:["card"],
-          mode:"payment",
-          line_items:req.body.products.map(product=>{
-              return{
-                  price_data:{
-                             currency:"usd",
-                             product_data:{
-                                  name:product.name,
-                                  // images:[product.image]
-                              },
-                              //  unit_amount:Math.round(product.price*100),
-                              unit_amount:(product.price)*100,
-                        },
-                        quantity:product.quantity
-              }
-          }),
-          success_url:"http://localhost:5000/success",
-          cancel_url:"http://localhost:5000/cancel"
+// app.post("/checkout",async (req,res)=>{
+//   try{
+//       const session=await stripe.checkout.session.create({
+//           payment_method_types:["card"],
+//           mode:"payment",
+//           line_items:req.body.products.map(product=>{
+//               return{
+//                   price_data:{
+//                              currency:"usd",
+//                              product_data:{
+//                                   name:product.name,
+//                                   // images:[product.image]
+//                               },
+//                               //  unit_amount:Math.round(product.price*100),
+//                               unit_amount:(product.price)*100,
+//                         },
+//                         quantity:product.quantity
+//               }
+//           }),
+//           success_url:"http://localhost:5000/success",
+//           cancel_url:"http://localhost:5000/cancel"
 
+
+//       })
+//       res.json({url:session.url})
+//   }catch(error){
+//       res.status(500).json({error:error.message})
+
+//   }
+// })
+
+// ===================================
+
+
+  app.post("/payment",async(req,res)=>{
+        const {products}=req.body;
+
+        console.log(products);
+        // [ { quantity: '1', price: '1500', name: 'Chair' } ]
+
+        // [
+        //   {
+        //     id: '666bd41bbbafc93643b0fab9',
+        //     quantity: '1',
+        //     price: '1500',
+        //     name: 'Chair'
+        //   }
+        // ]
+
+
+
+
+
+        // const lineItems=products.map((product)=>({
+        //     price_data:{
+        //         currency:"usd",
+        //         product_data:{
+        //             name:product.productName,
+        //             images:[product.image]
+        //         },
+        //         unit_amount:Math.round(product.price*100),
+        //     },
+
+
+        // }));
+
+        // const paymentIntent=await stripe.paymentIntent.create({
+        //     unit_amount:Math.round(products.price*100),
+        //     currency:"usd",
+        //     product_data:{
+        //                     name:products.productName,
+        //                     images:[products.image],
+        //                     price:products.price
+        //                 },
+
+        // })
+        // const session=await stripe.checkout.session.create({
+        //     payment_method_types:["card"],
+        //     line_items:paymentIntent,
+        //     mode:"payment",
+        //     success_url:"http://localhost:5000/success",
+        //     cancel_url:"http://localhost:5000/cancel"
+        // })
+        // res.json({id:session.id})
 
       })
-      res.json({url:session.url})
-  }catch(error){
-      res.status(500).json({error:error.message})
-
-  }
-})
 
 
 
