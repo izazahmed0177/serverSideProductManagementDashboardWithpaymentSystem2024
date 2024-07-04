@@ -6,10 +6,6 @@ const cors=require("cors");
 
 const stripe = require('stripe')('sk_test_51M7EzMEdI8RYA41Vd5z0CmiAioMViHTKBrU726MuVR01cT971ftnmnUekqI5CoRboMc3VyjKNzXYjYbEDcNAk7eL00COyK83lr');
 
-
-
-
-
 var jwt = require('jsonwebtoken');
 
 
@@ -357,12 +353,6 @@ run().catch(console.dir);
         // res.json({id:session.id})
 
       })
-
-
-
-
-
-
 
 
 app.get("/",(req,res)=>{
