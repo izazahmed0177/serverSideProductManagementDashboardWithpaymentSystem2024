@@ -93,6 +93,10 @@ async function run() {
         "productManagementProductDetails"
       );
 
+    const productCartsCollection = productManagementDB.collection(
+        "productManagementCarts"
+      );
+
     // userSelect: 
 
 
@@ -205,6 +209,17 @@ async function run() {
       });
 
       /////////////
+      // /////carts//////
+
+      app.post('/caers',async(req,res)=>{
+        const cartItem=req.body;
+        const result=await productCartsCollection.insertOne(cartItem);
+        res.send(result);
+
+      })
+
+
+      // ////
 
 
 
