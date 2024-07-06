@@ -211,7 +211,14 @@ async function run() {
       /////////////
       // /////carts//////
 
-      app.post('/caers',async(req,res)=>{
+      app.get('/carts',async(req,res)=>{
+        const result=await productCartsCollection.find().toArray();
+        res.send(result);
+      })
+
+
+
+      app.post('/carts',async(req,res)=>{
         const cartItem=req.body;
         const result=await productCartsCollection.insertOne(cartItem);
         res.send(result);
